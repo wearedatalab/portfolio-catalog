@@ -496,6 +496,74 @@ h1,h2,h3,h4,h5,h6{font-family:'Raleway',sans-serif;color:#fff;font-weight:700}
 .whatsapp-float:hover{transform:scale(1.1);box-shadow:0 6px 30px rgba(37,211,102,.6)}
 .whatsapp-float svg{width:28px;height:28px;fill:#fff}
 
+/* ===================== CLOSING PAGE ===================== */
+.closing-page{
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg-dark);position:relative;overflow:hidden;
+}
+.closing-page::before{
+  content:'';position:absolute;right:-80px;bottom:-80px;
+  width:400px;height:400px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpolygon points='100,10 190,60 190,140 100,190 10,140 10,60' fill='none' stroke='rgba(151,234,63,0.06)' stroke-width='1'/%3E%3Cpolygon points='100,30 170,70 170,130 100,170 30,130 30,70' fill='none' stroke='rgba(151,234,63,0.04)' stroke-width='1'/%3E%3Cpolygon points='100,50 150,80 150,120 100,150 50,120 50,80' fill='none' stroke='rgba(151,234,63,0.03)' stroke-width='1'/%3E%3C/svg%3E") no-repeat center;
+  background-size:contain;opacity:.5;
+}
+.closing-inner{
+  display:flex;align-items:center;gap:4rem;
+  max-width:1100px;width:100%;padding:2rem 3rem;z-index:1;
+}
+.closing-left{flex:1}
+.closing-left h2{
+  font-family:'Raleway',sans-serif;font-size:3rem;font-weight:800;
+  font-style:italic;color:#fff;line-height:1.15;
+}
+.closing-left h2 span{color:var(--accent)}
+.closing-right{
+  flex:0 0 380px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(151,234,63,.2);border-radius:var(--radius);
+  padding:2.5rem;text-align:center;position:relative;overflow:hidden;
+}
+.closing-right::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:var(--accent);
+}
+.closing-right::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:4px;
+  background:var(--accent);
+}
+.closing-label{
+  font-size:.7rem;font-weight:600;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;
+}
+.closing-logo{width:180px;margin:0 auto 1.5rem}
+.closing-divider{
+  width:80%;height:2px;background:var(--accent);
+  margin:0 auto 1.25rem;
+}
+.closing-contact{
+  font-size:.9rem;color:rgba(255,255,255,.8);margin-bottom:.5rem;
+  line-height:1.6;
+}
+.closing-contact a{color:#fff;text-decoration:none;transition:color .3s}
+.closing-contact a:hover{color:var(--accent)}
+.closing-site{
+  font-size:.95rem;font-weight:600;color:var(--accent);
+  margin-bottom:1rem;
+}
+.closing-site a{color:var(--accent);text-decoration:none}
+.closing-motto{
+  font-size:.75rem;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:#fff;
+  margin-top:1rem;padding-top:1rem;
+  border-top:2px solid var(--accent);
+  display:inline-block;
+}
+@media(max-width:768px){
+  .closing-inner{flex-direction:column;gap:2rem;padding:1.5rem;text-align:center}
+  .closing-left h2{font-size:2rem}
+  .closing-right{flex:none;width:100%;max-width:340px;padding:2rem}
+  .closing-logo{width:140px}
+}
+
 /* ===================== PAGE TRANSITION ===================== */
 .catalog-page .content-embed-area,
 .catalog-page .content-info{
@@ -685,7 +753,7 @@ const CATALOG_PAGES = [
   const tocClose = document.getElementById('toc-close');
   const tocGrid = document.getElementById('toc-overlay-grid');
 
-  const totalPages = CATALOG_PAGES.length + 2; // cover + toc + content pages
+  const totalPages = CATALOG_PAGES.length + 3; // cover + toc + content pages + closing
   let currentPage = 0;
   let isAnimating = false;
   let isMobile = window.innerWidth <= 900;
@@ -832,6 +900,36 @@ const CATALOG_PAGES = [
           Abrir en nueva pestana
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
+      </div>
+    `;
+    track.appendChild(div);
+  }
+
+  // ---- Build Closing Page ----
+  function buildClosingPage() {
+    const div = document.createElement('div');
+    div.className = 'catalog-page closing-page';
+    div.innerHTML = `
+      <div class="closing-inner">
+        <div class="closing-left">
+          <h2>¿Listo para<br><span>transformar</span><br>tu negocio?</h2>
+        </div>
+        <div class="closing-right">
+          <div class="closing-label">Contáctanos</div>
+          <img class="closing-logo" src="https://wearedatalab.com/wp-content/uploads/2024/08/logo-data.png" alt="DataLab">
+          <div class="closing-divider"></div>
+          <div class="closing-contact">
+            <a href="mailto:juan.garcia@wearedatalab.co">juan.garcia@wearedatalab.co</a>
+          </div>
+          <div class="closing-contact">
+            <a href="https://wa.me/573012660120">+57 301 266 0120</a>
+          </div>
+          <div class="closing-divider"></div>
+          <div class="closing-site">
+            <a href="https://wearedatalab.co" target="_blank" rel="noopener">wearedatalab.co</a>
+          </div>
+          <div class="closing-motto">IN DATA WE TRUST</div>
+        </div>
       </div>
     `;
     track.appendChild(div);
@@ -1173,6 +1271,7 @@ const CATALOG_PAGES = [
     buildCover();
     buildTOC();
     CATALOG_PAGES.forEach((p, i) => buildContentPage(p, i));
+    buildClosingPage();
     buildDots();
     buildTOCOverlay();
     navTotal.textContent = totalPages;
