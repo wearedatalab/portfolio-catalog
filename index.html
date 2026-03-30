@@ -153,6 +153,54 @@ h1,h2,h3,h4,h5,h6{font-family:'Raleway',sans-serif;color:#fff;font-weight:700}
   font-size:.65rem;font-weight:700;
 }
 
+/* ===================== TOC TABLE (MOBILE) ===================== */
+.toc-table-wrap{display:none}
+@media(max-width:768px){
+  .toc-grid{display:none !important}
+  .toc-table-wrap{
+    display:block;width:100%;max-width:100%;overflow-y:auto;
+    -webkit-overflow-scrolling:touch;padding-bottom:100px;
+  }
+  .toc-table{width:100%;border-collapse:separate;border-spacing:0}
+  .toc-table tr{
+    cursor:pointer;transition:background .3s;
+  }
+  .toc-table tr:hover,.toc-table tr:active{background:rgba(151,234,63,.08)}
+  .toc-table td{
+    padding:.75rem .5rem;border-bottom:1px solid rgba(255,255,255,.06);
+    vertical-align:middle;
+  }
+  .toc-table-num{
+    width:32px;text-align:center;
+    font-size:.7rem;font-weight:700;
+    color:#000;
+  }
+  .toc-table-num span{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:26px;height:26px;border-radius:50%;
+    background:var(--accent);
+  }
+  .toc-table-thumb{width:56px;padding-right:0 !important}
+  .toc-table-thumb img{
+    width:50px;height:34px;border-radius:6px;object-fit:cover;
+    background:#111;
+  }
+  .toc-table-info{padding-left:.5rem !important}
+  .toc-table-title{
+    font-size:.82rem;font-weight:600;color:#fff;line-height:1.3;
+    margin-bottom:2px;
+  }
+  .toc-table-cat{
+    font-size:.6rem;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--accent);
+  }
+  .toc-table-arrow{
+    width:28px;text-align:center;color:var(--text-muted);
+    font-size:.8rem;
+  }
+  .toc-table-arrow svg{width:16px;height:16px;stroke:var(--text-muted)}
+}
+
 /* ===================== CONTENT PAGE ===================== */
 .content-page{display:flex;flex-direction:row;background:var(--bg-dark)}
 .content-embed-area{
@@ -702,16 +750,29 @@ const CATALOG_PAGES = [
     const div = document.createElement('div');
     div.className = 'catalog-page toc-page';
     let cards = '';
+    let rows = '';
     CATALOG_PAGES.forEach((p, i) => {
+      const t = thumb(p);
       cards += `
         <div class="toc-card" data-goto="${i + 2}">
-          <img src="${thumb(p)}" alt="${p.title}" loading="lazy">
+          <img src="${t}" alt="${p.title}" loading="lazy">
           <div class="toc-card-overlay">
             <span class="toc-card-cat">${p.category}</span>
             <span class="toc-card-title">${p.title}</span>
           </div>
           <div class="toc-card-num">${i + 1}</div>
         </div>
+      `;
+      rows += `
+        <tr data-goto="${i + 2}">
+          <td class="toc-table-num"><span>${i + 1}</span></td>
+          <td class="toc-table-thumb"><img src="${t}" alt="${p.title}" loading="lazy"></td>
+          <td class="toc-table-info">
+            <div class="toc-table-title">${p.title}</div>
+            <div class="toc-table-cat">${p.category}</div>
+          </td>
+          <td class="toc-table-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></td>
+        </tr>
       `;
     });
     div.innerHTML = `
@@ -720,6 +781,7 @@ const CATALOG_PAGES = [
         <p>${CATALOG_PAGES.length} piezas en este catalogo</p>
       </div>
       <div class="toc-grid">${cards}</div>
+      <div class="toc-table-wrap"><table class="toc-table"><tbody>${rows}</tbody></table></div>
     `;
     track.appendChild(div);
   }
@@ -1065,9 +1127,9 @@ const CATALOG_PAGES = [
     tocOverlay.classList.remove('open');
   });
 
-  // Click handlers on TOC cards (both in-page and overlay)
+  // Click handlers on TOC cards and table rows (both in-page and overlay)
   document.addEventListener('click', (e) => {
-    const card = e.target.closest('.toc-card[data-goto]');
+    const card = e.target.closest('.toc-card[data-goto]') || e.target.closest('tr[data-goto]');
     if (card) {
       goToPage(parseInt(card.dataset.goto));
     }
