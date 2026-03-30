@@ -1193,28 +1193,37 @@ const CATALOG_PAGES = [
   }, { passive: false });
 
   // Touch swipe (horizontal on all devices)
+  let swipeLocked = false;
   document.addEventListener('touchstart', (e) => {
+    // Don't capture swipe if user is scrolling inside an iframe or TOC table
+    if (e.target.closest('iframe, .toc-table-wrap, .toc-page')) {
+      swipeLocked = true;
+      return;
+    }
+    swipeLocked = false;
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
     touchDelta = 0;
   }, { passive: true });
 
   document.addEventListener('touchmove', (e) => {
+    if (swipeLocked) return;
     const dx = e.touches[0].clientX - touchStartX;
     const dy = e.touches[0].clientY - touchStartY;
-    // Use horizontal swipe on all devices (left/right to navigate)
-    if (Math.abs(dx) > Math.abs(dy)) {
+    // Horizontal swipe detected
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) {
       touchDelta = dx;
-    } else if (isMobile) {
-      touchDelta = dy; // Also allow vertical swipe on mobile
+      e.preventDefault(); // Prevent native scroll so swipe works
     }
-  }, { passive: true });
+  }, { passive: false });
 
   document.addEventListener('touchend', () => {
-    if (Math.abs(touchDelta) > 50) {
-      if (touchDelta < 0) goToPage(currentPage + 1);
-      else goToPage(currentPage - 1);
+    if (swipeLocked) return;
+    if (Math.abs(touchDelta) > 40) {
+      if (touchDelta < 0) goToPage(currentPage + 1);  // swipe left = next
+      else goToPage(currentPage - 1);                  // swipe right = prev
     }
+    touchDelta = 0;
   });
 
   // TOC overlay
