@@ -439,6 +439,20 @@ h1,h2,h3,h4,h5,h6{font-family:'Raleway',sans-serif;color:#fff;font-weight:700}
   max-width:550px;width:100%;min-height:600px;
   border:none;border-radius:12px;
 }
+/* Facebook video/reel centered container */
+.fullscreen-viewer-body .fv-video-centered{
+  width:100%;height:100%;display:flex;
+  align-items:center;justify-content:center;
+  padding:16px;
+}
+.fullscreen-viewer-body .fv-video-centered iframe{
+  max-width:500px;max-height:90vh;width:100%;
+  aspect-ratio:9/16;border:none;border-radius:12px;
+  background:#000;
+}
+.fullscreen-viewer-body .fv-video-landscape iframe{
+  max-width:900px;aspect-ratio:16/9;
+}
 @media(max-width:900px){
   .fullscreen-viewer-header{padding:10px 16px}
   .fullscreen-viewer-header h3{font-size:.85rem;max-width:50%}
@@ -554,7 +568,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Raleway',sans-serif;color:#fff;font-weight:700}
   /* Push content below the fixed header */
   .content-embed-area{flex:0 0 calc(50vh - 20px);height:calc(50vh - 20px);padding:1.25rem;padding-top:50px;padding-bottom:.5rem}
   .embed-frame{height:100%}
-  .content-info{flex:1;height:auto;padding:1.5rem 1.5rem 6rem;justify-content:flex-start;border-left:none;border-top:1px solid rgba(255,255,255,.04)}
+  .content-info{flex:1;height:auto;padding:1.5rem 1.5rem 6rem;justify-content:flex-start;border-left:none;border-top:1px solid rgba(255,255,255,.04);overflow-y:auto;-webkit-overflow-scrolling:touch}
   .info-title{font-size:1.3rem}
   .info-description{font-size:.85rem;margin-bottom:1rem}
   .cover-meta{padding:0 1.5rem;bottom:5rem;flex-direction:column;align-items:center;gap:.5rem}
@@ -1414,8 +1428,13 @@ const CATALOG_PAGES = [
       content = `<iframe src="${url}${url.includes('?') ? '&' : '?'}autoplay=1" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen></iframe>`;
     } else if (type === 'image') {
       content = `<img class="fv-image" src="${url}" alt="${page.title}">`;
-    } else if (type === 'fb-post' || type === 'fb-reel' || type === 'instagram' || type === 'tiktok') {
-      // Social embeds - use iframe in a scrollable container
+    } else if (type === 'fb-reel') {
+      // Facebook reels/videos - centered with proper aspect ratio
+      content = `<div class="fv-video-centered"><iframe src="${url}" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>`;
+    } else if (type === 'fb-post') {
+      // Facebook posts - scrollable social container
+      content = `<div class="fv-social"><iframe src="${url}" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>`;
+    } else if (type === 'instagram' || type === 'tiktok') {
       let iframeUrl = url;
       if (type === 'instagram' && !url.includes('/embed')) {
         iframeUrl = url.replace(/\/?(\?.*)?$/, '/embed/');
@@ -1424,7 +1443,7 @@ const CATALOG_PAGES = [
         const match = url.match(/video\/(\d+)/);
         iframeUrl = match ? 'https://www.tiktok.com/embed/v2/' + match[1] : url;
       }
-      content = `<div class="fv-social"><iframe src="${iframeUrl}" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>`;
+      content = `<div class="fv-video-centered"><iframe src="${iframeUrl}" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>`;
     } else if (type === 'pdf') {
       content = `<iframe src="${url}#toolbar=1&navpanes=1&scrollbar=1"></iframe>`;
     } else if (type === 'iframe' || type === 'web') {
