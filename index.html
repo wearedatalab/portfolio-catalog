@@ -582,8 +582,34 @@ h1,h2,h3,h4,h5,h6{font-family:'Raleway',sans-serif;color:#fff;font-weight:700}
   }
   #catalog-header img{height:26px}
   /* Push content below the fixed header */
-  .content-embed-area{flex:0 0 calc(50vh - 20px);height:calc(50vh - 20px);padding:1.25rem;padding-top:50px;padding-bottom:.5rem}
-  .embed-frame{height:100%}
+  .content-embed-area{
+    flex:0 0 auto;height:auto;padding:1rem;padding-top:50px;padding-bottom:.5rem;
+    cursor:pointer;
+  }
+  .embed-frame{height:auto;aspect-ratio:16/10;max-height:45vh}
+  /* Mobile: show thumbnail preview instead of embed */
+  .embed-frame.mobile-preview{
+    position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .embed-frame.mobile-preview iframe,
+  .embed-frame.mobile-preview object{display:none !important}
+  .mobile-preview-img{
+    width:100%;height:100%;object-fit:cover;display:block;opacity:.7;
+  }
+  .mobile-preview-play{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:.75rem;
+    background:rgba(0,0,0,.4);
+  }
+  .mobile-preview-play svg{
+    width:56px;height:56px;fill:var(--accent);
+    filter:drop-shadow(0 4px 20px rgba(151,234,63,.4));
+  }
+  .mobile-preview-play span{
+    font-size:.75rem;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:#fff;
+  }
   .content-info{flex:1;height:auto;padding:1.5rem 1.5rem 10rem;justify-content:flex-start;border-left:none;border-top:1px solid rgba(255,255,255,.04);overflow-y:auto;-webkit-overflow-scrolling:touch}
   .info-title{font-size:1.3rem}
   .info-description{font-size:.85rem;margin-bottom:1rem}
@@ -1356,6 +1382,32 @@ const CATALOG_PAGES = [
 
     const placeholder = frame.querySelector('.embed-placeholder');
 
+    // Mobile: show thumbnail preview instead of loading embed
+    if (isMobile) {
+      const thumbSrc = frame.dataset.thumb;
+      const catalogIndex = pageIndex - 2; // offset for cover + toc pages
+      frame.classList.add('mobile-preview');
+      frame.innerHTML = `
+        <img class="mobile-preview-img" src="${thumbSrc}" alt="" onerror="this.style.display='none'">
+        <div class="mobile-preview-play">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <span>Ver pieza</span>
+        </div>
+      `;
+      frame.addEventListener('click', () => {
+        if (catalogIndex >= 0) openFullscreenViewer(catalogIndex);
+      });
+      // Also make the embed area clickable
+      const embedArea = page.querySelector('.content-embed-area');
+      if (embedArea) {
+        embedArea.addEventListener('click', (e) => {
+          if (e.target.closest('.embed-frame')) return; // already handled
+          if (catalogIndex >= 0) openFullscreenViewer(catalogIndex);
+        });
+      }
+      return;
+    }
+
     switch (type) {
       case 'youtube':
       case 'vimeo': {
@@ -1702,12 +1754,13 @@ const CATALOG_PAGES = [
       content = `<iframe src="${url}${url.includes('?') ? '&' : '?'}autoplay=1" allow="autoplay;encrypted-media;picture-in-picture" allowfullscreen></iframe>`;
     } else if (type === 'image') {
       content = `<img class="fv-image" src="${url}" alt="${page.title}">`;
-    } else if (type === 'fb-reel') {
-      // Facebook reels/videos - centered with proper aspect ratio
-      content = `<div class="fv-video-centered"><iframe src="${url}" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>`;
-    } else if (type === 'fb-post') {
-      // Facebook posts - scrollable social container
-      content = `<div class="fv-social"><iframe src="${url}" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>`;
+    } else if (type === 'facebook') {
+      // Facebook: detect if reel/video or post
+      if (url.includes('video.php') || url.includes('reel')) {
+        content = `<div class="fv-video-centered"><iframe src="${url}" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>`;
+      } else {
+        content = `<div class="fv-social"><iframe src="${url}" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>`;
+      }
     } else if (type === 'instagram' || type === 'tiktok') {
       let iframeUrl = url;
       if (type === 'instagram' && !url.includes('/embed')) {
@@ -1722,8 +1775,8 @@ const CATALOG_PAGES = [
       content = `<div class="fv-video-centered"><iframe src="${url}" allow="autoplay;encrypted-media" allowfullscreen></iframe></div>`;
     } else if (type === 'pdf') {
       content = `<iframe src="${url}#toolbar=1&navpanes=1&scrollbar=1"></iframe>`;
-    } else if (type === 'iframe' || type === 'web') {
-      content = `<iframe src="${url}" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>`;
+    } else if (type === 'iframe' || type === 'web' || type === 'webpreview') {
+      content = `<iframe src="${url}" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>`;
     } else {
       content = `<div class="fv-social" style="flex-direction:column;align-items:center;justify-content:center;gap:1rem">
         <p style="color:#999">Este contenido no se puede previsualizar directamente.</p>
