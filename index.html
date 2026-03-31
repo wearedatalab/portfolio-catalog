@@ -1116,27 +1116,24 @@ const CATALOG_PAGES = [
     const div = document.createElement('div');
     div.className = 'catalog-page toc-page';
 
-    // Build grouped columns
-    let colsHtml = '';
-    GROUP_ORDER.forEach(g => {
-      let rows = '';
-      CATALOG_PAGES.forEach((p, i) => {
-        if (p.group !== g) return;
-        rows += `
-          <tr data-goto="${i + 2}">
-            <td class="toc-table-num"><span>${i + 1}</span></td>
-            <td class="toc-table-info">
-              <div class="toc-table-title">${p.title}</div>
-              <div class="toc-table-cat">${p.category}</div>
-            </td>
-            <td class="toc-table-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></td>
-          </tr>`;
-      });
-      colsHtml += `
-        <div class="toc-col-group">
-          <div class="toc-col-group-title">${GROUP_LABELS[g]}</div>
-          <table class="toc-table"><tbody>${rows}</tbody></table>
-        </div>`;
+    // Build tabs
+    let tabsHtml = '';
+    GROUP_ORDER.forEach((g, idx) => {
+      tabsHtml += `<button class="toc-tab${idx === 0 ? ' active' : ''}" data-filter="${g}">${GROUP_LABELS[g]}</button>`;
+    });
+
+    // Build rows with group attribute
+    let rowsHtml = '';
+    CATALOG_PAGES.forEach((p, i) => {
+      rowsHtml += `
+        <tr data-goto="${i + 2}" data-group="${p.group}" style="${p.group !== 'imagenes' ? 'display:none' : ''}">
+          <td class="toc-table-num"><span>${i + 1}</span></td>
+          <td class="toc-table-info">
+            <div class="toc-table-title">${p.title}</div>
+            <div class="toc-table-cat">${p.category}</div>
+          </td>
+          <td class="toc-table-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></td>
+        </tr>`;
     });
 
     div.innerHTML = `
@@ -1144,8 +1141,25 @@ const CATALOG_PAGES = [
         <h2>Indice de Piezas</h2>
         <p>${CATALOG_PAGES.length} piezas en este catalogo</p>
       </div>
-      <div class="toc-columns">${colsHtml}</div>
+      <div class="toc-tabs" id="toc-page-tabs">${tabsHtml}</div>
+      <div class="toc-table-wrap"><table class="toc-table"><tbody id="toc-page-tbody">${rowsHtml}</tbody></table></div>
     `;
+
+    // Tab click handler
+    div.querySelector('#toc-page-tabs').addEventListener('click', (e) => {
+      const tab = e.target.closest('.toc-tab');
+      if (!tab) return;
+      div.querySelectorAll('.toc-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const filter = tab.dataset.filter;
+      div.querySelectorAll('#toc-page-tbody tr').forEach(row => {
+        row.style.display = (row.dataset.group === filter) ? '' : 'none';
+      });
+      // Scroll table to top
+      const wrap = div.querySelector('.toc-table-wrap');
+      if (wrap) wrap.scrollTop = 0;
+    });
+
     track.appendChild(div);
   }
 
