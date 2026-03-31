@@ -1626,10 +1626,8 @@ const CATALOG_PAGES = [
       track.style.transform = `translateX(-${currentPage * 100}vw)`;
     }
 
-    // Lazy load nearby
+    // Load current page embed immediately
     loadEmbed(currentPage);
-    loadEmbed(currentPage + 1);
-    if (currentPage > 0) loadEmbed(currentPage - 1);
 
     // Update nav
     updateNav();
@@ -1945,8 +1943,6 @@ const CATALOG_PAGES = [
         navBar.classList.remove('hidden');
         document.getElementById('catalog-header').classList.remove('hidden');
         loadEmbed(pg);
-        loadEmbed(pg + 1);
-        if (pg > 0) loadEmbed(pg - 1);
         buildPaginator();
         // Restore transition after layout settles
         requestAnimationFrame(() => {
@@ -1963,7 +1959,21 @@ const CATALOG_PAGES = [
     track.children[0].classList.add('active');
   }
 
+  // Preload all embeds in background after page loads
+  function preloadAllEmbeds() {
+    let i = 0;
+    function loadNext() {
+      if (i >= totalPages) return;
+      loadEmbed(i);
+      i++;
+      setTimeout(loadNext, 200); // stagger to avoid overwhelming browser
+    }
+    loadNext();
+  }
+
   init();
+  // Start background preload after initial render settles
+  setTimeout(preloadAllEmbeds, 500);
 })();
 </script>
 
