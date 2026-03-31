@@ -1553,7 +1553,7 @@ const CATALOG_PAGES = [
     }
 
     currentPage = index;
-    sessionStorage.setItem('catalog-current-page', currentPage);
+    history.replaceState(null, '', '#slide=' + (currentPage + 1));
 
     // Move track
     if (isMobile) {
@@ -1823,10 +1823,10 @@ const CATALOG_PAGES = [
       track.style.flexDirection = 'column';
     }
 
-    // Restore page from session (persist on F5)
-    const savedPage = sessionStorage.getItem('catalog-current-page');
-    if (savedPage !== null) {
-      const pg = parseInt(savedPage, 10);
+    // Restore page from URL hash (persist on F5)
+    const hashMatch = location.hash.match(/slide=(\d+)/);
+    if (hashMatch) {
+      const pg = parseInt(hashMatch[1], 10) - 1; // hash is 1-based
       if (pg > 0 && pg < totalPages) {
         // Jump without animation
         currentPage = pg;
