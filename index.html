@@ -819,6 +819,66 @@ const CATALOG_PAGES = [
     thumbnail: "",
   },
 
+  // ── VIDEOS YOUTUBE ──
+  {
+    title: "Video Entrevista",
+    category: "Videos",
+    description: "Video tipo entrevista con formato profesional, iluminacion de estudio y edicion dinamica para contenido corporativo.",
+    tags: ["Entrevista", "YouTube", "Video Corporativo", "Produccion"],
+    embedUrl: "https://www.youtube.com/embed/Agw2atGr3VU",
+    type: "youtube",
+    thumbnail: "https://img.youtube.com/vi/Agw2atGr3VU/hqdefault.jpg",
+  },
+  {
+    title: "Video Infografico",
+    category: "Videos",
+    description: "Video con formato infografico animado, combinando datos visuales, motion graphics y narrativa clara para comunicar informacion clave.",
+    tags: ["Infografia", "YouTube", "Motion Graphics", "Datos Visuales"],
+    embedUrl: "https://www.youtube.com/embed/iJa9JGEVqEE",
+    type: "youtube",
+    thumbnail: "https://img.youtube.com/vi/iJa9JGEVqEE/hqdefault.jpg",
+  },
+  {
+    title: "Video Experiencia",
+    category: "Videos",
+    description: "Video experiencial que captura la esencia de un evento o marca, con cinematografia envolvente y storytelling visual.",
+    tags: ["Experiencia", "YouTube", "Storytelling", "Cinematografia"],
+    embedUrl: "https://www.youtube.com/embed/b46MV59hKWY",
+    type: "youtube",
+    thumbnail: "https://img.youtube.com/vi/b46MV59hKWY/hqdefault.jpg",
+  },
+
+  // ── EBOOK ──
+  {
+    title: "Ebook Digital",
+    category: "Ebooks",
+    description: "Ebook con diseno editorial profesional, diagramacion atractiva y contenido de valor para generacion de leads.",
+    tags: ["Ebook", "Diseno Editorial", "Lead Magnet", "PDF"],
+    embedUrl: "https://drive.google.com/file/d/1yGQMWPtipsxJrhUzzJkybxPmZGtR6GTh/preview",
+    type: "pdf",
+    thumbnail: "",
+  },
+
+  // ── VIDEOS FOOH ──
+  {
+    title: "Video FOOH",
+    category: "Videos",
+    description: "Video FOOH (Fake Out of Home) con efectos visuales hiperrealistas que combinan elementos 3D con entornos reales.",
+    tags: ["FOOH", "Efectos Visuales", "3D", "Marketing Creativo"],
+    embedUrl: "https://drive.google.com/file/d/1ezwNYWBQ1vJwDYpwbTfdApC9k8zA_hbH/preview",
+    type: "gdrive-video",
+    thumbnail: "",
+  },
+  {
+    title: "Video FOOH",
+    category: "Videos",
+    description: "Pieza FOOH con animacion 3D integrada en escenarios urbanos reales, generando impacto visual y viralidad en redes.",
+    tags: ["FOOH", "Animacion 3D", "Viral", "Contenido Creativo"],
+    embedUrl: "https://drive.google.com/file/d/14QXCHWmt6GVIhGFV8Xz66zr8WqMiekfz/preview",
+    type: "gdrive-video",
+    thumbnail: "",
+  },
+
   // ── PAGINAS WEB ──
   {
     title: "IRIS - Pagina Web",
@@ -992,6 +1052,7 @@ const CATALOG_PAGES = [
       instagram: 'Post de Instagram',
       tiktok: 'Video de TikTok',
       webpreview: 'Sitio Web',
+      'gdrive-video': 'Video',
     };
 
     const tagsHtml = (page.tags && page.tags.length)
@@ -1210,6 +1271,16 @@ const CATALOG_PAGES = [
             placeholder.remove();
           }
         }, 5000);
+        break;
+      }
+      case 'gdrive-video': {
+        const gdIframe = document.createElement('iframe');
+        gdIframe.src = url;
+        gdIframe.allow = 'autoplay; encrypted-media';
+        gdIframe.allowFullscreen = true;
+        gdIframe.loading = 'lazy';
+        gdIframe.onload = () => { if (placeholder) placeholder.remove(); };
+        frame.appendChild(gdIframe);
         break;
       }
       default:
@@ -1444,6 +1515,8 @@ const CATALOG_PAGES = [
         iframeUrl = match ? 'https://www.tiktok.com/embed/v2/' + match[1] : url;
       }
       content = `<div class="fv-video-centered"><iframe src="${iframeUrl}" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>`;
+    } else if (type === 'gdrive-video') {
+      content = `<iframe src="${url}" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
     } else if (type === 'pdf') {
       content = `<iframe src="${url}#toolbar=1&navpanes=1&scrollbar=1"></iframe>`;
     } else if (type === 'iframe' || type === 'web') {
