@@ -524,13 +524,26 @@ h1,h2,h3,h4,h5,h6{font-family:'Raleway',sans-serif;color:#fff;font-weight:700}
 .nav-btn:disabled{opacity:.25;pointer-events:none}
 .nav-btn svg{width:18px;height:18px}
 .nav-indicator{
-  display:flex;align-items:center;gap:.6rem;
-  font-size:.75rem;font-weight:500;letter-spacing:.1em;color:var(--text-muted);
-  cursor:pointer;padding:.5rem .75rem;border-radius:8px;
-  transition:background .3s;
+  display:flex;align-items:center;gap:.3rem;
+  font-size:.75rem;font-weight:500;letter-spacing:.05em;color:var(--text-muted);
+  padding:.25rem .5rem;border-radius:8px;
+  max-width:calc(100vw - 140px);overflow-x:auto;
+  scrollbar-width:none;
 }
-.nav-indicator:hover{background:rgba(255,255,255,.05)}
-.nav-indicator .current{color:var(--accent);font-weight:700}
+.nav-indicator::-webkit-scrollbar{display:none}
+.nav-page-btn{
+  min-width:32px;height:32px;border-radius:6px;border:none;
+  background:transparent;color:var(--text-muted);cursor:pointer;
+  font-family:'Montserrat',sans-serif;font-size:.72rem;font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .25s;flex-shrink:0;
+}
+.nav-page-btn:hover{background:rgba(151,234,63,.15);color:var(--accent)}
+.nav-page-btn.active{background:var(--accent);color:#000}
+.nav-page-ellipsis{
+  min-width:20px;height:32px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-muted);font-size:.7rem;flex-shrink:0;
+}
 .nav-dots{display:none}
 .nav-dot{
   width:6px;height:6px;border-radius:50%;
@@ -738,11 +751,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Raleway',sans-serif;color:#fff;font-weight:700}
   <button class="nav-btn" id="btn-prev" aria-label="Anterior">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
   </button>
-  <div class="nav-indicator" id="nav-indicator" title="Abrir indice">
-    <span class="current" id="nav-current">1</span>
-    <span>/</span>
-    <span id="nav-total">1</span>
-  </div>
+  <div class="nav-indicator" id="nav-indicator"></div>
   <button class="nav-btn" id="btn-next" aria-label="Siguiente">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
   </button>
@@ -1113,8 +1122,8 @@ const CATALOG_PAGES = [
   const btnPrev = document.getElementById('btn-prev');
   const btnNext = document.getElementById('btn-next');
   const navDots = document.getElementById('nav-dots');
-  const navCurrent = document.getElementById('nav-current');
-  const navTotal = document.getElementById('nav-total');
+  const navCurrent = document.getElementById('nav-current'); // legacy ref
+  const navTotal = document.getElementById('nav-total'); // legacy ref
   const navIndicator = document.getElementById('nav-indicator');
   const tocOverlay = document.getElementById('toc-overlay');
   const tocClose = document.getElementById('toc-close');
@@ -1340,15 +1349,7 @@ const CATALOG_PAGES = [
 
   // ---- Build Nav Dots ----
   function buildDots() {
-    navDots.innerHTML = '';
-    for (let i = 0; i < totalPages; i++) {
-      const dot = document.createElement('div');
-      dot.className = 'nav-dot' + (i === currentPage ? ' active' : '');
-      dot.addEventListener('click', () => goToPage(i));
-      navDots.appendChild(dot);
-    }
-    // Only show dots if reasonable count
-    if (totalPages > 16) navDots.style.display = 'none';
+    // No longer needed, paginator replaces dots
   }
 
   // ---- Build TOC Overlay ----
@@ -1611,17 +1612,63 @@ const CATALOG_PAGES = [
     tocOverlay.classList.remove('open');
   }
 
-  function updateNav() {
-    navCurrent.textContent = currentPage + 1;
-    navTotal.textContent = totalPages;
+  function buildPaginator() {
+    const nav = document.getElementById('nav-indicator');
+    nav.innerHTML = '';
+    const total = totalPages;
+    const cur = currentPage;
+    const maxVisible = isMobile ? 5 : 9;
+    const pages = [];
 
-    btnPrev.disabled = currentPage === 0;
-    btnNext.disabled = currentPage === totalPages - 1;
+    // Always show first page
+    pages.push(0);
 
-    // Update dots
-    document.querySelectorAll('.nav-dot').forEach((d, i) => {
-      d.classList.toggle('active', i === currentPage);
+    if (total <= maxVisible + 2) {
+      // Show all pages
+      for (let i = 1; i < total; i++) pages.push(i);
+    } else {
+      // Smart pagination with ellipsis
+      let start = Math.max(1, cur - Math.floor(maxVisible / 2));
+      let end = Math.min(total - 2, cur + Math.floor(maxVisible / 2));
+
+      if (start <= 2) { start = 1; end = Math.min(maxVisible, total - 2); }
+      if (end >= total - 3) { end = total - 2; start = Math.max(1, total - maxVisible - 1); }
+
+      if (start > 1) pages.push('...');
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (end < total - 2) pages.push('...');
+
+      // Always show last page
+      pages.push(total - 1);
+    }
+
+    pages.forEach(p => {
+      if (p === '...') {
+        const el = document.createElement('span');
+        el.className = 'nav-page-ellipsis';
+        el.textContent = '...';
+        nav.appendChild(el);
+      } else {
+        const btn = document.createElement('button');
+        btn.className = 'nav-page-btn' + (p === cur ? ' active' : '');
+        btn.textContent = p + 1;
+        btn.addEventListener('click', () => goToPage(p));
+        nav.appendChild(btn);
+      }
     });
+
+    // Scroll active button into view
+    const activeBtn = nav.querySelector('.nav-page-btn.active');
+    if (activeBtn) {
+      activeBtn.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+    }
+
+    btnPrev.disabled = cur === 0;
+    btnNext.disabled = cur === total - 1;
+  }
+
+  function updateNav() {
+    buildPaginator();
   }
 
   // ---- Events ----
@@ -1833,10 +1880,8 @@ const CATALOG_PAGES = [
     buildTOC();
     CATALOG_PAGES.forEach((p, i) => buildContentPage(p, i));
     buildClosingPage();
-    buildDots();
     buildTOCOverlay();
-    navTotal.textContent = totalPages;
-    navCurrent.textContent = '1';
+    buildPaginator();
 
     // Set initial layout direction
     if (isMobile) {
@@ -1859,13 +1904,7 @@ const CATALOG_PAGES = [
         loadEmbed(pg);
         loadEmbed(pg + 1);
         if (pg > 0) loadEmbed(pg - 1);
-        navCurrent.textContent = pg + 1;
-        btnPrev.disabled = pg === 0;
-        btnNext.disabled = pg === totalPages - 1;
-        // Update dots
-        navDots.querySelectorAll('.nav-dot').forEach((d, i) => {
-          d.classList.toggle('active', i === pg);
-        });
+        buildPaginator();
         // Restore transition after layout settles
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
