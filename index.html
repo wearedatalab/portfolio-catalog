@@ -1735,20 +1735,27 @@ const CATALOG_PAGES = [
         // Jump without animation
         currentPage = pg;
         track.style.transition = 'none';
-        if (isMobile) {
-          track.style.transform = `translateY(-${pg * 100}vh)`;
-        } else {
-          track.style.transform = `translateX(-${pg * 100}vw)`;
-        }
+        track.style.transform = isMobile
+          ? `translateY(-${pg * 100}vh)`
+          : `translateX(-${pg * 100}vw)`;
         navBar.classList.remove('hidden');
         document.getElementById('catalog-header').classList.remove('hidden');
         loadEmbed(pg);
         loadEmbed(pg + 1);
         if (pg > 0) loadEmbed(pg - 1);
-        updateNav();
+        navCurrent.textContent = pg + 1;
+        btnPrev.disabled = pg === 0;
+        btnNext.disabled = pg === totalPages - 1;
+        // Update dots
+        navDots.querySelectorAll('.nav-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === pg);
+        });
+        // Restore transition after layout settles
         requestAnimationFrame(() => {
-          track.style.transition = '';
-          track.children[pg].classList.add('active');
+          requestAnimationFrame(() => {
+            track.style.transition = '';
+            track.children[pg].classList.add('active');
+          });
         });
         return;
       }
