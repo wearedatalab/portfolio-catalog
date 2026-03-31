@@ -119,51 +119,89 @@ h1,h2,h3,h4,h5,h6{font-family:'Raleway',sans-serif;color:#fff;font-weight:700}
 }
 
 /* ===================== TOC PAGE ===================== */
-.toc-page{display:flex;flex-direction:column;align-items:center;background:var(--bg-dark);padding:3rem 2rem;overflow-y:auto}
-.toc-header{margin-bottom:2.5rem;text-align:center}
+.toc-page{display:flex;flex-direction:column;align-items:center;background:var(--bg-dark);padding:2rem 2rem 0;overflow:hidden}
+.toc-header{margin-bottom:1rem;text-align:center;flex-shrink:0}
 .toc-header h2{font-size:1.6rem;font-weight:300;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.5rem}
 .toc-header p{color:var(--text-muted);font-size:.85rem;letter-spacing:.1em}
 .toc-grid{display:none !important}
 
-/* ===================== TOC TABLE ===================== */
+/* ── TOC TABS ── */
+.toc-tabs{
+  display:flex;gap:.5rem;margin-bottom:1.25rem;flex-shrink:0;flex-wrap:wrap;justify-content:center;
+}
+.toc-tab{
+  padding:.55rem 1.4rem;border-radius:100px;border:1px solid rgba(255,255,255,.12);
+  background:transparent;color:var(--text-muted);cursor:pointer;
+  font-family:'Montserrat',sans-serif;font-size:.78rem;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;
+  transition:all .3s var(--transition-smooth);
+}
+.toc-tab:hover{border-color:var(--accent);color:var(--accent)}
+.toc-tab.active{background:var(--accent);color:#000;border-color:var(--accent)}
+
+/* ── TOC TABLE ── */
 .toc-table-wrap{
-  display:block;width:100%;max-width:800px;overflow-y:auto;
-  -webkit-overflow-scrolling:touch;padding-bottom:100px;
+  display:block;width:100%;max-width:1000px;
+  flex:1;overflow-y:auto;padding-bottom:100px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;scrollbar-color:var(--accent) rgba(255,255,255,.05);
 }
+.toc-table-wrap::-webkit-scrollbar{width:6px}
+.toc-table-wrap::-webkit-scrollbar-track{background:rgba(255,255,255,.03);border-radius:3px}
+.toc-table-wrap::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
 .toc-table{width:100%;border-collapse:separate;border-spacing:0}
-.toc-table tr{
-  cursor:pointer;transition:background .3s;
+
+/* Desktop: two columns */
+.toc-columns{
+  display:grid;grid-template-columns:1fr 1fr;gap:0 2rem;
+  width:100%;max-width:1000px;flex:1;overflow-y:auto;padding-bottom:100px;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;scrollbar-color:var(--accent) rgba(255,255,255,.05);
 }
+.toc-columns::-webkit-scrollbar{width:6px}
+.toc-columns::-webkit-scrollbar-track{background:rgba(255,255,255,.03);border-radius:3px}
+.toc-columns::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+.toc-col-group{margin-bottom:1.5rem}
+.toc-col-group-title{
+  font-family:'Raleway',sans-serif;font-size:.7rem;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--accent);
+  padding:.6rem .5rem;border-bottom:1px solid rgba(151,234,63,.2);
+  margin-bottom:0;
+}
+
+.toc-table tr{cursor:pointer;transition:background .3s}
 .toc-table tr:hover,.toc-table tr:active{background:rgba(151,234,63,.08)}
 .toc-table td{
-  padding:.85rem .6rem;border-bottom:1px solid rgba(255,255,255,.06);
+  padding:.7rem .5rem;border-bottom:1px solid rgba(255,255,255,.06);
   vertical-align:middle;
 }
 .toc-table-num{
   width:36px;text-align:center;
-  font-size:.75rem;font-weight:700;
-  color:#000;
+  font-size:.75rem;font-weight:700;color:#000;
 }
 .toc-table-num span{
   display:inline-flex;align-items:center;justify-content:center;
-  width:30px;height:30px;border-radius:50%;
-  background:var(--accent);
+  width:28px;height:28px;border-radius:50%;background:var(--accent);
 }
 .toc-table-thumb{display:none}
 .toc-table-info{padding-left:.75rem !important}
 .toc-table-title{
-  font-size:.95rem;font-weight:600;color:#fff;line-height:1.3;
-  margin-bottom:3px;
+  font-size:.88rem;font-weight:600;color:#fff;line-height:1.3;margin-bottom:2px;
 }
 .toc-table-cat{
-  font-size:.65rem;font-weight:600;letter-spacing:.08em;
+  font-size:.6rem;font-weight:600;letter-spacing:.08em;
   text-transform:uppercase;color:var(--accent);
 }
 .toc-table-arrow{
-  width:32px;text-align:center;color:var(--text-muted);
-  font-size:.8rem;
+  width:28px;text-align:center;color:var(--text-muted);font-size:.8rem;
 }
 .toc-table-arrow svg{width:16px;height:16px;stroke:var(--text-muted)}
+
+@media(max-width:768px){
+  .toc-columns{grid-template-columns:1fr;gap:0;padding-bottom:120px}
+  .toc-tabs{gap:.35rem}
+  .toc-tab{padding:.45rem 1rem;font-size:.7rem}
+}
 
 /* ===================== CONTENT PAGE ===================== */
 .content-page{display:flex;flex-direction:row;background:var(--bg-dark)}
@@ -521,9 +559,13 @@ h1,h2,h3,h4,h5,h6{font-family:'Raleway',sans-serif;color:#fff;font-weight:700}
   transition:all .3s;
 }
 #toc-overlay .toc-close:hover{background:var(--accent);color:#000;border-color:var(--accent)}
-#toc-overlay .toc-overlay-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-  gap:1rem;width:100%;max-width:1000px;margin-top:1rem;
+.toc-overlay-content{
+  width:100%;max-width:800px;margin-top:1rem;
+  display:flex;flex-direction:column;align-items:center;
+  flex:1;overflow:hidden;
+}
+#toc-overlay .toc-table-wrap{
+  flex:1;width:100%;max-width:800px;padding-bottom:2rem;
 }
 
 /* ===================== RESPONSIVE ===================== */
@@ -547,7 +589,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Raleway',sans-serif;color:#fff;font-weight:700}
   .info-description{font-size:.85rem;margin-bottom:1rem}
   .cover-meta{padding:0 1.5rem;bottom:5rem;flex-direction:column;align-items:center;gap:.5rem}
   .cover-logo{width:160px}
-  .toc-overlay .toc-overlay-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  .toc-overlay-content{max-width:100%}
   .toc-page{padding-top:50px}
   .whatsapp-float{bottom:85px;right:16px;width:48px;height:48px}
   .whatsapp-float svg{width:24px;height:24px}
@@ -703,7 +745,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Raleway',sans-serif;color:#fff;font-weight:700}
     <h2>Indice</h2>
     <p>Selecciona una pieza para ver</p>
   </div>
-  <div class="toc-overlay-grid" id="toc-overlay-grid"></div>
+  <div class="toc-overlay-content" id="toc-overlay-grid"></div>
 </div>
 
 <script>
@@ -720,9 +762,13 @@ const CATALOG_CONFIG = {
 };
 
 const CATALOG_PAGES = [
+  // ══════════════════════════════════════
+  //  GRUPO 1: IMAGENES (posts, webs, diseño gráfico)
+  // ══════════════════════════════════════
   {
     title: "Post Educativo Facebook",
     category: "Redes Sociales",
+    group: "imagenes",
     description: "Publicacion de Facebook con contenido educativo sobre finanzas personales, disenada para generar engagement y compartidos.",
     tags: ["Mis Finanzas en Casa", "Facebook", "Contenido Educativo", "Finanzas"],
     embedUrl: "https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2FMisFinanzasEnCasa%2Fposts%2Fpfbid023UqbxP83aijahTEMWpizQDi6h1oqoAtkguh7yqovW5N4JAMPZJ2RdPqwwTRjiEGl&show_text=true&width=500",
@@ -732,6 +778,7 @@ const CATALOG_PAGES = [
   {
     title: "Post Instagram",
     category: "Redes Sociales",
+    group: "imagenes",
     description: "Publicacion de Instagram de DataLab con contenido de marca, optimizada para alcance organico y conexion con la audiencia.",
     tags: ["DataLab", "Instagram", "Branding", "Marketing Digital"],
     embedUrl: "https://www.instagram.com/p/B6F-6_npBkE/embed/",
@@ -739,26 +786,9 @@ const CATALOG_PAGES = [
     thumbnail: "",
   },
   {
-    title: "TikTok Educativo",
-    category: "Redes Sociales",
-    description: "Video de TikTok educativo sobre RegTech para Latam Fintech Hub, con formato vertical optimizado para la plataforma.",
-    tags: ["Latam Fintech Hub", "TikTok", "RegTech", "Fintech", "Educativo"],
-    embedUrl: "https://www.tiktok.com/embed/v2/7380352641273957637",
-    type: "tiktok",
-    thumbnail: "",
-  },
-  {
-    title: "Video YouTube",
-    category: "Videos",
-    description: "Video educativo producido para canal de YouTube con contenido de valor, edicion profesional y branding consistente.",
-    tags: ["Pimienta Catering", "a2censo", "YouTube", "Video Corporativo"],
-    embedUrl: "https://www.youtube.com/embed/AmMEhjuOrdQ?si=nWAIEKVZaRSatgYy",
-    type: "youtube",
-    thumbnail: "https://img.youtube.com/vi/AmMEhjuOrdQ/hqdefault.jpg",
-  },
-  {
     title: "Post Facebook",
     category: "Redes Sociales",
+    group: "imagenes",
     description: "Publicacion de Facebook de Mis Finanzas en Casa con tips practicos de ahorro y manejo financiero personal.",
     tags: ["Mis Finanzas en Casa", "Facebook", "Finanzas Personales"],
     embedUrl: "https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2FMisFinanzasEnCasa%2Fposts%2Fpfbid0VoEhGotvXna1TWneXVoJQinLSR2rHqJDEtB3Yn6nYRBy2spSVFBSqTGM3jgtoFErl&show_text=true&width=500",
@@ -768,6 +798,7 @@ const CATALOG_PAGES = [
   {
     title: "Post Corporativo",
     category: "Redes Sociales",
+    group: "imagenes",
     description: "Publicacion corporativa de Rubbermaid Commercial Latino con contenido de producto para audiencia B2B.",
     tags: ["Rubbermaid", "Facebook", "B2B", "Producto Comercial"],
     embedUrl: "https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Frubbermaidcommercial.latino%2Fposts%2Fpfbid033U9eaTdzGtfNguya6PJH2kpGS8v8kYmpFj8popdECYdk3EjgKcVhTKfwjZhzZZN8l&show_text=true&width=500",
@@ -775,88 +806,19 @@ const CATALOG_PAGES = [
     thumbnail: "",
   },
   {
-    title: "Reel Facebook",
+    title: "Pieza de Redes Sociales",
     category: "Redes Sociales",
-    description: "Reel vertical para Facebook con formato dinamico y optimizado para engagement en el feed de la plataforma.",
-    tags: ["Facebook Reel", "Video Vertical", "Engagement"],
-    embedUrl: "https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F950364837510561%2F&show_text=true&width=267&t=0",
+    group: "imagenes",
+    description: "Publicacion de Facebook de Mis Finanzas en Casa con contenido de valor sobre finanzas personales y educacion financiera.",
+    tags: ["Mis Finanzas en Casa", "Facebook", "Finanzas Personales", "Post"],
+    embedUrl: "https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2FMisFinanzasEnCasa%2Fposts%2Fpfbid02d4MHLJtpjQekmpwNmi19VMSY2neS7wEqxocJxvjJKPdXhsakYpUao6VMvWucyLDLl&show_text=true&width=500",
     type: "facebook",
     thumbnail: "",
   },
-  {
-    title: "Reel Facebook",
-    category: "Redes Sociales",
-    description: "Reel creativo para Facebook con narrativa visual atractiva y call-to-action integrado.",
-    tags: ["Facebook Reel", "Video Vertical", "Contenido Creativo"],
-    embedUrl: "https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F931846159567957%2F&show_text=true&width=267&t=0",
-    type: "facebook",
-    thumbnail: "",
-  },
-
-  // ── VIDEOS YOUTUBE ──
-  {
-    title: "Video Entrevista",
-    category: "Videos",
-    description: "Video tipo entrevista con formato profesional, iluminacion de estudio y edicion dinamica para contenido corporativo.",
-    tags: ["Entrevista", "YouTube", "Video Corporativo", "Produccion"],
-    embedUrl: "https://www.youtube.com/embed/Agw2atGr3VU",
-    type: "youtube",
-    thumbnail: "https://img.youtube.com/vi/Agw2atGr3VU/hqdefault.jpg",
-  },
-  {
-    title: "Video Infografico",
-    category: "Videos",
-    description: "Video con formato infografico animado, combinando datos visuales, motion graphics y narrativa clara para comunicar informacion clave.",
-    tags: ["Infografia", "YouTube", "Motion Graphics", "Datos Visuales"],
-    embedUrl: "https://www.youtube.com/embed/iJa9JGEVqEE",
-    type: "youtube",
-    thumbnail: "https://img.youtube.com/vi/iJa9JGEVqEE/hqdefault.jpg",
-  },
-  {
-    title: "Video Experiencia",
-    category: "Videos",
-    description: "Video experiencial que captura la esencia de un evento o marca, con cinematografia envolvente y storytelling visual.",
-    tags: ["Experiencia", "YouTube", "Storytelling", "Cinematografia"],
-    embedUrl: "https://www.youtube.com/embed/b46MV59hKWY",
-    type: "youtube",
-    thumbnail: "https://img.youtube.com/vi/b46MV59hKWY/hqdefault.jpg",
-  },
-
-  // ── EBOOK ──
-  {
-    title: "Ebook Digital",
-    category: "Ebooks",
-    description: "Ebook con diseno editorial profesional, diagramacion atractiva y contenido de valor para generacion de leads.",
-    tags: ["Ebook", "Diseno Editorial", "Lead Magnet", "PDF"],
-    embedUrl: "https://drive.google.com/file/d/1yGQMWPtipsxJrhUzzJkybxPmZGtR6GTh/preview",
-    type: "pdf",
-    thumbnail: "",
-  },
-
-  // ── VIDEOS FOOH ──
-  {
-    title: "Video FOOH",
-    category: "Videos",
-    description: "Video FOOH (Fake Out of Home) con efectos visuales hiperrealistas que combinan elementos 3D con entornos reales.",
-    tags: ["FOOH", "Efectos Visuales", "3D", "Marketing Creativo"],
-    embedUrl: "https://drive.google.com/file/d/1ezwNYWBQ1vJwDYpwbTfdApC9k8zA_hbH/preview",
-    type: "gdrive-video",
-    thumbnail: "",
-  },
-  {
-    title: "Video FOOH",
-    category: "Videos",
-    description: "Pieza FOOH con animacion 3D integrada en escenarios urbanos reales, generando impacto visual y viralidad en redes.",
-    tags: ["FOOH", "Animacion 3D", "Viral", "Contenido Creativo"],
-    embedUrl: "https://drive.google.com/file/d/14QXCHWmt6GVIhGFV8Xz66zr8WqMiekfz/preview",
-    type: "gdrive-video",
-    thumbnail: "",
-  },
-
-  // ── PAGINAS WEB ──
   {
     title: "IRIS - Pagina Web",
     category: "Paginas Web",
+    group: "imagenes",
     description: "Desarrollo de sitio web corporativo para IRIS, compania de soluciones financieras vigilada por la Superintendencia Financiera de Colombia.",
     tags: ["IRIS", "Sitio Web", "Finanzas", "Desarrollo Web"],
     embedUrl: "https://iris.com.co/",
@@ -866,6 +828,7 @@ const CATALOG_PAGES = [
   {
     title: "Mundo Aventura - Ecommerce",
     category: "Paginas Web",
+    group: "imagenes",
     description: "Desarrollo de ecommerce a la medida para Mundo Aventura, plataforma de venta de pasaportes y boletas en linea.",
     tags: ["Mundo Aventura", "Ecommerce", "Desarrollo a la Medida", "Pasaportes"],
     embedUrl: "https://pasaportes.mundoaventura.com.co/",
@@ -875,6 +838,7 @@ const CATALOG_PAGES = [
   {
     title: "Starkapital - Plataforma Factoring",
     category: "Paginas Web",
+    group: "imagenes",
     description: "Desarrollo de plataforma de factoring para Starkapital, financiamiento flexible para vehiculos productivos.",
     tags: ["Starkapital", "Factoring", "Plataforma Financiera", "Desarrollo a la Medida"],
     embedUrl: "https://starkapital.com/",
@@ -884,6 +848,7 @@ const CATALOG_PAGES = [
   {
     title: "Educapital - Plataforma de Credito",
     category: "Paginas Web",
+    group: "imagenes",
     description: "Desarrollo de plataforma de credito a la medida para Educapital, gestion financiera y administrativa para instituciones educativas.",
     tags: ["Educapital", "Credito", "Plataforma Educativa", "Desarrollo a la Medida"],
     embedUrl: "https://educapital.com.co/",
@@ -893,6 +858,7 @@ const CATALOG_PAGES = [
   {
     title: "Rubbermaid - Pagina Corporativa",
     category: "Paginas Web",
+    group: "imagenes",
     description: "Desarrollo de pagina corporativa a la medida para Rubbermaid Commercial Products Mexico, con catalogo de productos y experiencia de marca.",
     tags: ["Rubbermaid", "Pagina Corporativa", "Mexico", "Desarrollo Web"],
     embedUrl: "https://rubbermaidcommercialoficial.com.mx/",
@@ -900,21 +866,137 @@ const CATALOG_PAGES = [
     thumbnail: "https://lh3.googleusercontent.com/d/1H9hGBbJ8BhxgXQgSVv_6Y4go5crM4EUb",
   },
 
-  // ── CATALOGOS ──
+  // ══════════════════════════════════════
+  //  GRUPO 2: VIDEOS
+  // ══════════════════════════════════════
+  {
+    title: "TikTok Educativo",
+    category: "Redes Sociales",
+    group: "videos",
+    description: "Video de TikTok educativo sobre RegTech para Latam Fintech Hub, con formato vertical optimizado para la plataforma.",
+    tags: ["Latam Fintech Hub", "TikTok", "RegTech", "Fintech", "Educativo"],
+    embedUrl: "https://www.tiktok.com/embed/v2/7380352641273957637",
+    type: "tiktok",
+    thumbnail: "",
+  },
+  {
+    title: "Video YouTube",
+    category: "Videos",
+    group: "videos",
+    description: "Video educativo producido para canal de YouTube con contenido de valor, edicion profesional y branding consistente.",
+    tags: ["Pimienta Catering", "a2censo", "YouTube", "Video Corporativo"],
+    embedUrl: "https://www.youtube.com/embed/AmMEhjuOrdQ?si=nWAIEKVZaRSatgYy",
+    type: "youtube",
+    thumbnail: "https://img.youtube.com/vi/AmMEhjuOrdQ/hqdefault.jpg",
+  },
+  {
+    title: "Reel Facebook",
+    category: "Redes Sociales",
+    group: "videos",
+    description: "Reel vertical para Facebook con formato dinamico y optimizado para engagement en el feed de la plataforma.",
+    tags: ["Facebook Reel", "Video Vertical", "Engagement"],
+    embedUrl: "https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F950364837510561%2F&show_text=true&width=267&t=0",
+    type: "facebook",
+    thumbnail: "",
+  },
+  {
+    title: "Reel Facebook",
+    category: "Redes Sociales",
+    group: "videos",
+    description: "Reel creativo para Facebook con narrativa visual atractiva y call-to-action integrado.",
+    tags: ["Facebook Reel", "Video Vertical", "Contenido Creativo"],
+    embedUrl: "https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F931846159567957%2F&show_text=true&width=267&t=0",
+    type: "facebook",
+    thumbnail: "",
+  },
+  {
+    title: "Video Snack",
+    category: "Redes Sociales",
+    group: "videos",
+    description: "Reel de Facebook en formato vertical, contenido snackeable y dinamico optimizado para captar atencion rapida en el feed.",
+    tags: ["Facebook Reel", "Video Vertical", "Snack Content", "Engagement"],
+    embedUrl: "https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1378635946696606%2F&show_text=true&width=267&t=0",
+    type: "facebook",
+    thumbnail: "",
+  },
+  {
+    title: "Video Entrevista",
+    category: "Videos",
+    group: "videos",
+    description: "Video tipo entrevista con formato profesional, iluminacion de estudio y edicion dinamica para contenido corporativo.",
+    tags: ["Entrevista", "YouTube", "Video Corporativo", "Produccion"],
+    embedUrl: "https://www.youtube.com/embed/Agw2atGr3VU",
+    type: "youtube",
+    thumbnail: "https://img.youtube.com/vi/Agw2atGr3VU/hqdefault.jpg",
+  },
+  {
+    title: "Video Infografico",
+    category: "Videos",
+    group: "videos",
+    description: "Video con formato infografico animado, combinando datos visuales, motion graphics y narrativa clara para comunicar informacion clave.",
+    tags: ["Infografia", "YouTube", "Motion Graphics", "Datos Visuales"],
+    embedUrl: "https://www.youtube.com/embed/iJa9JGEVqEE",
+    type: "youtube",
+    thumbnail: "https://img.youtube.com/vi/iJa9JGEVqEE/hqdefault.jpg",
+  },
+  {
+    title: "Video Experiencia",
+    category: "Videos",
+    group: "videos",
+    description: "Video experiencial que captura la esencia de un evento o marca, con cinematografia envolvente y storytelling visual.",
+    tags: ["Experiencia", "YouTube", "Storytelling", "Cinematografia"],
+    embedUrl: "https://www.youtube.com/embed/b46MV59hKWY",
+    type: "youtube",
+    thumbnail: "https://img.youtube.com/vi/b46MV59hKWY/hqdefault.jpg",
+  },
+  {
+    title: "Video FOOH",
+    category: "Videos",
+    group: "videos",
+    description: "Video FOOH (Fake Out of Home) con efectos visuales hiperrealistas que combinan elementos 3D con entornos reales.",
+    tags: ["FOOH", "Efectos Visuales", "3D", "Marketing Creativo"],
+    embedUrl: "https://drive.google.com/file/d/1ezwNYWBQ1vJwDYpwbTfdApC9k8zA_hbH/preview",
+    type: "gdrive-video",
+    thumbnail: "",
+  },
+  {
+    title: "Video FOOH",
+    category: "Videos",
+    group: "videos",
+    description: "Pieza FOOH con animacion 3D integrada en escenarios urbanos reales, generando impacto visual y viralidad en redes.",
+    tags: ["FOOH", "Animacion 3D", "Viral", "Contenido Creativo"],
+    embedUrl: "https://drive.google.com/file/d/14QXCHWmt6GVIhGFV8Xz66zr8WqMiekfz/preview",
+    type: "gdrive-video",
+    thumbnail: "",
+  },
+
+  // ══════════════════════════════════════
+  //  GRUPO 3: CONTENIDO ESCRITO
+  // ══════════════════════════════════════
+  {
+    title: "Ebook Digital",
+    category: "Ebooks",
+    group: "escrito",
+    description: "Ebook con diseno editorial profesional, diagramacion atractiva y contenido de valor para generacion de leads.",
+    tags: ["Ebook", "Diseno Editorial", "Lead Magnet", "PDF"],
+    embedUrl: "https://drive.google.com/file/d/1yGQMWPtipsxJrhUzzJkybxPmZGtR6GTh/preview",
+    type: "pdf",
+    thumbnail: "",
+  },
   {
     title: "Catalogo de Productos Rubbermaid",
-    category: "Ebooks",
+    category: "Catalogos",
+    group: "escrito",
     description: "Catalogo digital de productos Rubbermaid Commercial con fichas tecnicas, especificaciones y fotografias de producto en alta calidad.",
     tags: ["Rubbermaid", "Catalogo", "Productos Comerciales", "PDF"],
     embedUrl: "https://rubbermaidcommercialoficial.com.mx/static/uploads/46c08f42-f7a1-4e2a-a33a-8c95b7e335c8.pdf",
     type: "pdf",
     thumbnail: "https://lh3.googleusercontent.com/d/1F5GPixmbdEB6MlrqbYvjwWDAKXu1svas",
   },
-
-  // ── BRANDING ──
   {
     title: "Manual de Marca",
     category: "Branding",
+    group: "escrito",
     description: "Manual de identidad de marca con lineamientos de uso de logo, paleta de colores, tipografia y aplicaciones graficas.",
     tags: ["Branding", "Manual de Marca", "Identidad Visual", "Diseno Grafico"],
     embedUrl: "https://drive.google.com/file/d/13tqhPItSiyUuX9pQ-_AaeOHeDScLTsFj/preview",
@@ -924,30 +1006,11 @@ const CATALOG_PAGES = [
   {
     title: "Propuesta de Logo",
     category: "Branding",
+    group: "escrito",
     description: "Propuesta creativa de diseno de logotipo con variaciones, conceptualizacion y justificacion grafica del diseno.",
     tags: ["Branding", "Logo", "Propuesta Creativa", "Diseno Grafico"],
     embedUrl: "https://drive.google.com/file/d/1zs46SIKYjTtv9FmWQCFPjf8OBv-T-Uz5/preview",
     type: "pdf",
-    thumbnail: "",
-  },
-
-  // ── REDES SOCIALES (adicionales) ──
-  {
-    title: "Video Snack",
-    category: "Redes Sociales",
-    description: "Reel de Facebook en formato vertical, contenido snackeable y dinamico optimizado para captar atencion rapida en el feed.",
-    tags: ["Facebook Reel", "Video Vertical", "Snack Content", "Engagement"],
-    embedUrl: "https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1378635946696606%2F&show_text=true&width=267&t=0",
-    type: "facebook",
-    thumbnail: "",
-  },
-  {
-    title: "Pieza de Redes Sociales",
-    category: "Redes Sociales",
-    description: "Publicacion de Facebook de Mis Finanzas en Casa con contenido de valor sobre finanzas personales y educacion financiera.",
-    tags: ["Mis Finanzas en Casa", "Facebook", "Finanzas Personales", "Post"],
-    embedUrl: "https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2FMisFinanzasEnCasa%2Fposts%2Fpfbid02d4MHLJtpjQekmpwNmi19VMSY2neS7wEqxocJxvjJKPdXhsakYpUao6VMvWucyLDLl&show_text=true&width=500",
-    type: "facebook",
     thumbnail: "",
   },
 ];
@@ -1029,42 +1092,59 @@ const CATALOG_PAGES = [
   };
 
   // ---- Build TOC Page ----
-  function buildTOC() {
-    const div = document.createElement('div');
-    div.className = 'catalog-page toc-page';
-    let cards = '';
-    let rows = '';
+  const GROUP_LABELS = { imagenes: 'Imagenes', videos: 'Videos', escrito: 'Contenido Escrito' };
+  const GROUP_ORDER = ['imagenes', 'videos', 'escrito'];
+
+  function buildTOCRows(filter) {
+    let html = '';
     CATALOG_PAGES.forEach((p, i) => {
-      const t = thumb(p);
-      cards += `
-        <div class="toc-card" data-goto="${i + 2}">
-          <img src="${t}" alt="${p.title}" loading="lazy">
-          <div class="toc-card-overlay">
-            <span class="toc-card-cat">${p.category}</span>
-            <span class="toc-card-title">${p.title}</span>
-          </div>
-          <div class="toc-card-num">${i + 1}</div>
-        </div>
-      `;
-      rows += `
+      if (filter && p.group !== filter) return;
+      html += `
         <tr data-goto="${i + 2}">
           <td class="toc-table-num"><span>${i + 1}</span></td>
-          <td class="toc-table-thumb"><img src="${t}" alt="${p.title}" loading="lazy"></td>
           <td class="toc-table-info">
             <div class="toc-table-title">${p.title}</div>
             <div class="toc-table-cat">${p.category}</div>
           </td>
           <td class="toc-table-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></td>
-        </tr>
-      `;
+        </tr>`;
     });
+    return html;
+  }
+
+  function buildTOC() {
+    const div = document.createElement('div');
+    div.className = 'catalog-page toc-page';
+
+    // Build grouped columns
+    let colsHtml = '';
+    GROUP_ORDER.forEach(g => {
+      let rows = '';
+      CATALOG_PAGES.forEach((p, i) => {
+        if (p.group !== g) return;
+        rows += `
+          <tr data-goto="${i + 2}">
+            <td class="toc-table-num"><span>${i + 1}</span></td>
+            <td class="toc-table-info">
+              <div class="toc-table-title">${p.title}</div>
+              <div class="toc-table-cat">${p.category}</div>
+            </td>
+            <td class="toc-table-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></td>
+          </tr>`;
+      });
+      colsHtml += `
+        <div class="toc-col-group">
+          <div class="toc-col-group-title">${GROUP_LABELS[g]}</div>
+          <table class="toc-table"><tbody>${rows}</tbody></table>
+        </div>`;
+    });
+
     div.innerHTML = `
       <div class="toc-header">
         <h2>Indice de Piezas</h2>
         <p>${CATALOG_PAGES.length} piezas en este catalogo</p>
       </div>
-      <div class="toc-grid">${cards}</div>
-      <div class="toc-table-wrap"><table class="toc-table"><tbody>${rows}</tbody></table></div>
+      <div class="toc-columns">${colsHtml}</div>
     `;
     track.appendChild(div);
   }
@@ -1170,20 +1250,40 @@ const CATALOG_PAGES = [
 
   // ---- Build TOC Overlay ----
   function buildTOCOverlay() {
-    let cards = '';
-    CATALOG_PAGES.forEach((p, i) => {
-      cards += `
-        <div class="toc-card" data-goto="${i + 2}">
-          <img src="${thumb(p)}" alt="${p.title}" loading="lazy">
-          <div class="toc-card-overlay">
-            <span class="toc-card-cat">${p.category}</span>
-            <span class="toc-card-title">${p.title}</span>
-          </div>
-          <div class="toc-card-num">${i + 1}</div>
-        </div>
-      `;
+    let tabsHtml = `<button class="toc-tab active" data-filter="all">Todos</button>`;
+    GROUP_ORDER.forEach(g => {
+      tabsHtml += `<button class="toc-tab" data-filter="${g}">${GROUP_LABELS[g]}</button>`;
     });
-    tocGrid.innerHTML = cards;
+
+    let rowsHtml = '';
+    CATALOG_PAGES.forEach((p, i) => {
+      rowsHtml += `
+        <tr data-goto="${i + 2}" data-group="${p.group}">
+          <td class="toc-table-num"><span>${i + 1}</span></td>
+          <td class="toc-table-info">
+            <div class="toc-table-title">${p.title}</div>
+            <div class="toc-table-cat">${p.category}</div>
+          </td>
+          <td class="toc-table-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></td>
+        </tr>`;
+    });
+
+    tocGrid.innerHTML = `
+      <div class="toc-tabs" id="toc-overlay-tabs">${tabsHtml}</div>
+      <div class="toc-table-wrap"><table class="toc-table"><tbody id="toc-overlay-tbody">${rowsHtml}</tbody></table></div>
+    `;
+
+    // Tab click handler
+    tocGrid.querySelector('#toc-overlay-tabs').addEventListener('click', (e) => {
+      const tab = e.target.closest('.toc-tab');
+      if (!tab) return;
+      tocGrid.querySelectorAll('.toc-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const filter = tab.dataset.filter;
+      tocGrid.querySelectorAll('#toc-overlay-tbody tr').forEach(row => {
+        row.style.display = (filter === 'all' || row.dataset.group === filter) ? '' : 'none';
+      });
+    });
   }
 
   // ---- Lazy Load Embeds ----
@@ -1412,9 +1512,21 @@ const CATALOG_PAGES = [
     if (e.key === 'Escape') goToPage(0);
   });
 
-  // Mouse wheel
+  // Mouse wheel — skip if target is inside a scrollable container
   let wheelTimeout;
   document.addEventListener('wheel', (e) => {
+    // Check if the event target is inside a scrollable element
+    const scrollable = e.target.closest('.toc-columns, .toc-table-wrap, .toc-page, .content-info, #toc-overlay, .embed-frame');
+    if (scrollable) {
+      const el = scrollable;
+      const canScrollUp = el.scrollTop > 0;
+      const canScrollDown = el.scrollTop + el.clientHeight < el.scrollHeight - 2;
+      const hasScroll = el.scrollHeight > el.clientHeight + 5;
+      if (hasScroll && ((e.deltaY > 0 && canScrollDown) || (e.deltaY < 0 && canScrollUp))) {
+        // Let the scroll happen naturally, don't change slide
+        return;
+      }
+    }
     e.preventDefault();
     if (wheelTimeout) return;
     wheelTimeout = setTimeout(() => { wheelTimeout = null; }, 800);
