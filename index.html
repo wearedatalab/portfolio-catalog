@@ -1301,6 +1301,15 @@ const CATALOG_PAGES = [
       if (wrap) wrap.scrollTop = 0;
     });
 
+    // Row click handler - navigate to slide
+    div.querySelector('#toc-page-tbody').addEventListener('click', (e) => {
+      const row = e.target.closest('tr[data-goto]');
+      if (row) {
+        e.stopPropagation();
+        goToPage(parseInt(row.dataset.goto));
+      }
+    });
+
     track.appendChild(div);
   }
 
@@ -1430,6 +1439,16 @@ const CATALOG_PAGES = [
       tocGrid.querySelectorAll('#toc-overlay-tbody tr').forEach(row => {
         row.style.display = (filter === 'all' || row.dataset.group === filter) ? '' : 'none';
       });
+    });
+
+    // Row click handler - navigate to slide
+    tocGrid.querySelector('#toc-overlay-tbody').addEventListener('click', (e) => {
+      const row = e.target.closest('tr[data-goto]');
+      if (row) {
+        e.stopPropagation();
+        tocOverlay.classList.remove('open');
+        goToPage(parseInt(row.dataset.goto));
+      }
     });
   }
 
