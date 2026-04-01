@@ -1712,7 +1712,7 @@ const CATALOG_PAGES = [
         const btn = document.createElement('button');
         btn.className = 'nav-page-btn' + (p === cur ? ' active' : '');
         btn.textContent = p + 1;
-        btn.addEventListener('click', () => goToPage(p));
+        btn.addEventListener('click', (e) => { e.stopPropagation(); goToPage(p); });
         nav.appendChild(btn);
       }
     });
@@ -1732,8 +1732,8 @@ const CATALOG_PAGES = [
   }
 
   // ---- Events ----
-  btnPrev.addEventListener('click', () => goToPage(currentPage - 1));
-  btnNext.addEventListener('click', () => goToPage(currentPage + 1));
+  btnPrev.addEventListener('click', (e) => { e.stopPropagation(); goToPage(currentPage - 1); });
+  btnNext.addEventListener('click', (e) => { e.stopPropagation(); goToPage(currentPage + 1); });
 
   // Keyboard
   document.addEventListener('keydown', (e) => {
@@ -1804,10 +1804,7 @@ const CATALOG_PAGES = [
     touchDelta = 0;
   });
 
-  // TOC overlay
-  navIndicator.addEventListener('click', () => {
-    tocOverlay.classList.toggle('open');
-  });
+  // TOC overlay close
   tocClose.addEventListener('click', () => {
     tocOverlay.classList.remove('open');
   });
